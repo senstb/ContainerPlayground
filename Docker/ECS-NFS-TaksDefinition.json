@@ -1,0 +1,49 @@
+{
+   "containerDefinitions": [
+      {
+         "essential": true,
+         "image": "<Image built off Dockerfile with nfs-common/nfs-utils installed",
+         "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+               "awslogs-group" : "/ecs/nfs-test-logs",
+               "awslogs-region": "us-east-1",
+               "awslogs-stream-prefix": "ecs"
+            }
+         },
+         "name": "example-nfs-mount",
+         "mountPoints": [
+           {
+             "readOnly": false,
+             "containerPath": "/efs",
+             "sourceVolume": "efs"
+           }
+         ],
+         "memory": 128,
+         "cpu": 256
+      }
+   ],
+   "cpu": "256",
+   "executionRoleArn": "arn:aws:iam::012345678910:role/ecsTaskExecutionRole",
+   "family": "nfs-mount-example",
+   "requiresCompatibilities": [
+       "EC2"
+    ],
+  "volumes": [
+    {
+      "name": "efs",
+      "host": null,
+      "dockerVolumeConfiguration": {
+        "autoprovision": null,
+        "labels": null,
+        "scope": "task",
+        "driver": "local",
+        "driverOpts": {
+          "type": "nfs",
+          "device": ":/",
+          "o": "addr=10.0.1.9,nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport"
+        }
+      }
+    }
+  ]
+}
